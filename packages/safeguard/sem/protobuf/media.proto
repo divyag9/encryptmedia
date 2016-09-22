@@ -15,9 +15,9 @@ message Media {
 	string DeviceOS = 11;
 	string DeviceOSVersion = 12;
   string FileName = 13;
-  string MimeType = 14;
-	string Application = 15;
-	string ApplicationID = 16;
-	string ApplicationVersion = 17;
-	bytes  ImageBytes = 18;
+	bytes  ImageBytes = 14;
+  string MimeType = 15;
+	string Application = 16;
+	string ApplicationID = 17;
+	string ApplicationVersion = 18;
 }
