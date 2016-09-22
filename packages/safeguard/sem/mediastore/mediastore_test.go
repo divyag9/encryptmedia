@@ -12,9 +12,8 @@ func TestDecodeMedia(t *testing.T) {
 	}
 }
 
-// func BenchmarkDecodeMedia(b *testing.B) {
-// 	for n := 0; n < b.N; n++ {
-// 		data := []byte(strconv.Itoa(n))
-// 		DecodeMedia(data)
-// 	}
-// }
+func BenchmarkDecodeMedia(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		DecodeMedia(data)
+	}
+}
