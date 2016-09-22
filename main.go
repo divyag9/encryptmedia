@@ -36,13 +36,13 @@ func main() {
 	if err != nil {
 		log.Fatal("marshaling error: ", err)
 	}
+	fmt.Println("data: ", data)
 	origChecksum := md5.Sum(data)
 	fileName := mediastore.DecodeMedia(data)
 	fmt.Println("File stored on disk: ", fileName)
 	if getChecksum(fileName) == origChecksum {
 		fmt.Println("File match")
 	}
-
 }
 
 // Returns checksum of the file contents
