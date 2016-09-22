@@ -1,0 +1,23 @@
+syntax = "proto3";
+package protobuf;
+
+message Media {
+	int64  Version = 1;
+	string GUID = 2;
+	string Client = 3;
+	string LoanType = 4;
+	string OrderNumber = 5;
+	string UserName = 6;
+	float  Latitude = 7;
+	float  Longitude = 8;
+	string DateTaken = 9;
+	string DeviceModel = 10;
+	string DeviceOS = 11;
+	string DeviceOSVersion = 12;
+  string FileName = 13;
+	bytes  ImageBytes = 14;
+  string MimeType = 15;
+	string Application = 16;
+	string ApplicationID = 17;
+	string ApplicationVersion = 18;
+}
