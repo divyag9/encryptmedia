@@ -5,38 +5,49 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 
 	"github.com/divyag9/encryptmedia/packages/safeguard/sem/mediastore"
-	pb "github.com/divyag9/encryptmedia/packages/safeguard/sem/protobuf"
-	"github.com/golang/protobuf/proto"
 )
 
 func main() {
-	media := &pb.Media{Version: 1,
-		GUID:               "test",
-		Client:             "test",
-		LoanType:           "test",
-		OrderNumber:        "test",
-		UserName:           "test",
-		Latitude:           1.0,
-		Longitude:          2.0,
-		DateTaken:          "test",
-		DeviceModel:        "test",
-		DeviceOS:           "test",
-		DeviceOSVersion:    "test",
-		FileName:           "test",
-		ImageBytes:         []byte{10, 20, 30},
-		MimeType:           "test",
-		Application:        "test",
-		ApplicationID:      "test",
-		ApplicationVersion: "test"}
+	// media := &pb.Media{Version: 1,
+	// 	GUID:               "test",
+	// 	Client:             "test",
+	// 	LoanType:           "test",
+	// 	OrderNumber:        "test",
+	// 	UserName:           "test",
+	// 	Latitude:           1.0,
+	// 	Longitude:          2.0,
+	// 	DateTaken:          "test",
+	// 	DeviceModel:        "test",
+	// 	DeviceOS:           "test",
+	// 	DeviceOSVersion:    "test",
+	// 	FileName:           "test",
+	// 	ImageBytes:         []byte{10, 20, 30},
+	// 	MimeType:           "test",
+	// 	Application:        "test",
+	// 	ApplicationID:      "test",
+	// 	ApplicationVersion: "test"}
+	//
+	// // decode Media and return the filename stored on disk
+	// data, err := proto.Marshal(media)
+	// if err != nil {
+	// 	log.Fatal("marshaling error: ", err)
+	// }
+	// fmt.Println("data: ", data)
 
-	// decode Media and return the filename stored on disk
-	data, err := proto.Marshal(media)
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+
+}
+
+// handle the incoming requet
+func handler(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal("marshaling error: ", err)
+		log.Fatal("Failed to read request body: ", err)
 	}
-	fmt.Println("data: ", data)
 	origChecksum := md5.Sum(data)
 	fileName := mediastore.DecodeMedia(data)
 	fmt.Println("File stored on disk: ", fileName)
