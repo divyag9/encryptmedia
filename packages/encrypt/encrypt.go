@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"errors"
 	"io"
 )
 
@@ -52,5 +53,31 @@ func Encrypt(key, message []byte) ([]byte, error) {
 	}
 
 	out := gcm.Seal(nonce, nonce, message, nil)
+	return out, nil
+}
+
+// Decrypt recovers a message secured using AES-GCM.
+func Decrypt(key, message []byte) ([]byte, error) {
+	if len(message) <= nonceSize {
+		return nil, errors.New("Decryption failed: message length is less than nonce size")
+	}
+
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	gcm, err := cipher.NewGCM(c)
+	if err != nil {
+		return nil, err
+	}
+
+	nonce := make([]byte, nonceSize)
+	copy(nonce, message)
+
+	out, err := gcm.Open(nil, nonce, message[nonceSize:], nil)
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }

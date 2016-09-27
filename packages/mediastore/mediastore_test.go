@@ -13,7 +13,9 @@ var mediaCases = []struct {
 }{
 	{[]byte{8, 1, 18, 4, 116, 101, 115, 116, 26, 4, 116, 101, 115, 116, 34, 4, 116, 101, 115, 116, 42, 4, 116, 101, 115, 116, 50, 4, 116, 101, 115, 116, 61, 0, 0, 128, 63, 69, 0, 0, 0, 64, 74, 4, 116,
 		101, 115, 116, 82, 4, 116, 101, 115, 116, 90, 4, 116, 101, 115, 116, 98, 4, 116, 101, 115, 116, 106, 4, 116, 101, 115, 116, 114, 3, 10, 20, 30, 122, 4, 116, 101, 115, 116, 130, 1, 4, 116, 101, 115, 116, 138, 1, 4, 116,
-		101, 115, 116, 146, 1, 4, 116, 101, 115, 116}, "test.sem"},
+		101, 115, 116, 146, 1, 4, 116, 101, 115, 116},
+		"test.sem",
+	},
 }
 
 var failureCases = []struct {
@@ -22,11 +24,13 @@ var failureCases = []struct {
 	{[]byte{5, 4, 7}},
 }
 
-func TestDecodeMedia(t *testing.T) {
-	for _, media := range mediaCases {
-		fileName, _ := DecodeMedia(media.data)
-		if fileName != media.expectedFname {
-			t.Errorf("FileName returned:%q, expectedFileName:%q", fileName, media.expectedFname)
+func TestWriteEncryptedMediaToFile(t *testing.T) {
+	for _, m := range mediaCases {
+		media, _ := GetMedia(m.data)
+		encryptedMedia, _ := media.GetEncryptedMedia()
+		fileName, _ := encryptedMedia.WriteEncryptedMediaToFile()
+		if fileName != m.expectedFname {
+			t.Errorf("File returned:%q, expected:%q", fileName, m.expectedFname)
 		}
 	}
 }

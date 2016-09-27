@@ -20,9 +20,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Failed to read request body: ", err)
 	}
-	fileName, errDecode := mediastore.DecodeMedia(data)
-	if errDecode != nil {
-		log.Fatal("Failed to decode the bytes recieved: ", errDecode)
+	media, _ := mediastore.GetMedia(data)
+	encryptedMedia, _ := media.GetEncryptedMedia()
+	fileName, err := encryptedMedia.WriteEncryptedMediaToFile()
+	if err != nil {
+		log.Fatal("Failed to write media to disk: ", err)
 	}
 	fmt.Println("File stored on disk: ", fileName)
 }
