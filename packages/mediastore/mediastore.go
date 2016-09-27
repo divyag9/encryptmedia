@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/divyag9/encryptmedia/packages/safeguard/sem/encrypt"
-	pb "github.com/divyag9/encryptmedia/packages/safeguard/sem/protobuf"
+	"github.com/divyag9/encryptmedia/packages/encrypt"
+	pb "github.com/divyag9/encryptmedia/packages/protobuf"
 	"github.com/golang/protobuf/proto"
 )
 

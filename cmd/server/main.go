@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/divyag9/encryptmedia/packages/safeguard/sem/mediastore"
+	"github.com/divyag9/encryptmedia/packages/mediastore"
 )
 
 func main() {
