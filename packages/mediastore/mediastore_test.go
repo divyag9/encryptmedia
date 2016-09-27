@@ -3,7 +3,7 @@ package mediastore
 import (
 	"testing"
 
-	pb "github.com/divyag9/encryptmedia/packages/safeguard/sem/protobuf"
+	pb "github.com/divyag9/encryptmedia/packages/protobuf"
 	"github.com/golang/protobuf/proto"
 )
 
