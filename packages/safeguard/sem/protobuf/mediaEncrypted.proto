@@ -1,7 +1,7 @@
 syntax = "proto3";
 package protobuf;
 
-message Media {
+message MediaEncrypted {
 	int64  Version = 1;
 	string GUID = 2;
 	string Client = 3;
@@ -19,5 +19,6 @@ message Media {
 	string Application = 15;
 	string ApplicationID = 16;
 	string ApplicationVersion = 17;
-	bytes  Bytes = 18;
+	bytes  EncryptedBytes = 18;
+  bytes  SymmetricKey = 19;
 }

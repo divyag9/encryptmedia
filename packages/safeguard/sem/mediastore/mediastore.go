@@ -5,44 +5,59 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/divyag9/encryptmedia/packages/safeguard/sem/encrypt"
 	pb "github.com/divyag9/encryptmedia/packages/safeguard/sem/protobuf"
 	"github.com/golang/protobuf/proto"
 )
 
-//DecodeMedia takes the bytes, decodes to Media protobuf and writes to a file on disk
-func DecodeMedia(data []byte) string {
+// DecodeMedia takes the bytes recieved, decodes to Media protobuf and writes the encrypted media to a file on disk
+func DecodeMedia(data []byte) (string, error) {
 	// Create the Media protobuf
 	media := &pb.Media{}
 	if err := proto.Unmarshal(data, media); err != nil {
 		log.Fatalln("Failed to parse data:", err)
 	}
 
-	//Copying to another protobuf
-	//What all should go into the newMedia buffer??
-	newMedia := &pb.Media{}
-	newMedia.Version = media.Version
-	newMedia.GUID = media.GUID
-	newMedia.Client = media.Client
-	newMedia.LoanType = media.LoanType
-	newMedia.OrderNumber = media.OrderNumber
-	newMedia.UserName = media.UserName
-	newMedia.Latitude = media.Latitude
-	newMedia.Longitude = media.Longitude
-	newMedia.DateTaken = media.DateTaken
-	newMedia.DeviceModel = media.DeviceModel
-	newMedia.DeviceOS = media.DeviceOS
-	newMedia.DeviceOSVersion = media.DeviceOSVersion
-	newMedia.FileName = media.FileName
-	newMedia.ImageBytes = media.ImageBytes // will need to encrypt this
-	newMedia.MimeType = media.MimeType
-	newMedia.Application = media.Application
-	newMedia.ApplicationID = media.ApplicationID
-	newMedia.ApplicationVersion = media.ApplicationVersion
-
-	//Write media back to disk
-	fileName := fmt.Sprint(media.GUID, ".pack")
-	if err := ioutil.WriteFile(fileName, data, 0644); err != nil {
-		log.Fatalln("Failed to write file to disk:", err)
+	// Copying to the encrypted media protobuf
+	encryptedMedia := &pb.MediaEncrypted{}
+	encryptedMedia.Version = media.Version
+	encryptedMedia.GUID = media.GUID
+	encryptedMedia.Client = media.Client
+	encryptedMedia.LoanType = media.LoanType
+	encryptedMedia.OrderNumber = media.OrderNumber
+	encryptedMedia.UserName = media.UserName
+	encryptedMedia.Latitude = media.Latitude
+	encryptedMedia.Longitude = media.Longitude
+	encryptedMedia.DateTaken = media.DateTaken
+	encryptedMedia.DeviceModel = media.DeviceModel
+	encryptedMedia.DeviceOS = media.DeviceOS
+	encryptedMedia.DeviceOSVersion = media.DeviceOSVersion
+	encryptedMedia.FileName = media.FileName
+	encryptedMedia.MimeType = media.MimeType
+	encryptedMedia.Application = media.Application
+	encryptedMedia.ApplicationID = media.ApplicationID
+	encryptedMedia.ApplicationVersion = media.ApplicationVersion
+	key, errKey := encrypt.GenerateKey()
+	if errKey != nil {
+		log.Fatalln("Error generating AES-256 key ", errKey)
 	}
-	return fileName
+	encryptedMedia.SymmetricKey = key
+	// Encrypt the media bytes
+	encryptedBytes, errEncrypt := encrypt.Encrypt(key, media.Bytes)
+	if errEncrypt != nil {
+		log.Fatalln("Error encrypting media bytes ", errEncrypt)
+	}
+	encryptedMedia.EncryptedBytes = encryptedBytes
+
+	// Marshal the encryptedMedia
+	encryptedData, errMarshal := proto.Marshal(encryptedMedia)
+	if errMarshal != nil {
+		log.Fatalln("Error marshaling encryptedMedia: ", errMarshal)
+	}
+	// Write encrypted media back to disk
+	fileName := fmt.Sprint(encryptedMedia.GUID, ".sem")
+	if errWrite := ioutil.WriteFile(fileName, encryptedData, 0644); errWrite != nil {
+		log.Fatalln("Failed to write file to disk:", errWrite)
+	}
+	return fileName, nil
 }
