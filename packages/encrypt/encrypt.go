@@ -17,22 +17,16 @@ const (
 func GenerateKey() ([]byte, error) {
 	key := make([]byte, keySize)
 	_, err := io.ReadFull(rand.Reader, key[:])
-	if err != nil {
-		return nil, err
-	}
 
-	return key, nil
+	return key, err
 }
 
 // GenerateNonce generates a new AES-GCM nonce.
 func GenerateNonce() ([]byte, error) {
 	nonce := make([]byte, nonceSize)
 	_, err := io.ReadFull(rand.Reader, nonce[:])
-	if err != nil {
-		return nil, err
-	}
 
-	return nonce, nil
+	return nonce, err
 }
 
 // Encrypt secures a message using AES-GCM.
