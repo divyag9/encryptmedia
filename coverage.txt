@@ -1,0 +1,12 @@
+
+github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 GenerateKey	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 GenerateNonce	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 Encrypt	 72.73% (8/11)
+github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 Decrypt	 71.43% (10/14)
+github.com/divyag9/encryptmedia/packages/encrypt		 -------------	 77.42% (24/31)
+
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 Media.GetEncryptedMedia			 83.87% (26/31)
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 GetMedia					 60.00% (3/5)
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 MediaEncrypted.WriteEncryptedMediaToFile	 54.55% (6/11)
+github.com/divyag9/encryptmedia/packages/mediastore			 ----------------------------------------	 74.47% (35/47)
+
