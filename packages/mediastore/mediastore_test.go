@@ -54,7 +54,7 @@ func TestSaveMediaEncrypted(t *testing.T) {
 		mediaTest.ApplicationVersion = mediaEncryptedTest.ApplicationVersion
 		mediaTest.Bytes = decryptedBytes
 		if !reflect.DeepEqual(*media, *mediaTest) {
-			t.Errorf("Bytes returned:%v, expected:%v", *mediaTest, *media)
+			t.Errorf("Media returned:%v, expected:%v", *mediaTest, *media)
 		}
 	}
 }
