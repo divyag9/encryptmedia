@@ -1,4 +1,4 @@
-package encrypt
+package symmetric
 
 import (
 	"crypto/aes"
@@ -47,6 +47,7 @@ func Encrypt(key, message []byte) ([]byte, error) {
 	}
 
 	out := gcm.Seal(nonce, nonce, message, nil)
+
 	return out, nil
 }
 
@@ -73,5 +74,6 @@ func Decrypt(key, message []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return out, nil
 }

@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/divyag9/encryptmedia/packages"
-	"github.com/divyag9/encryptmedia/packages/encrypt"
-	pb "github.com/divyag9/encryptmedia/packages/protobuf"
+	"github.com/divyag9/encryptmedia/packages/encrypt/symmetric"
+	"github.com/divyag9/encryptmedia/packages/protobuf"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -25,7 +25,7 @@ var mediaCases = []struct {
 func TestSaveMediaEncrypted(t *testing.T) {
 	for _, m := range mediaCases {
 		media := &encryptMedia.Media{}
-		pb.UnmarshalMedia(m.data, media)
+		protobuf.UnmarshalMedia(m.data, media)
 
 		mediaEncrypted := &encryptMedia.MediaEncrypted{}
 		mediaEncryptedBytes, _ := GetMediaEncryptedBytes(media, mediaEncrypted)
@@ -35,8 +35,8 @@ func TestSaveMediaEncrypted(t *testing.T) {
 		bytesFile, _ := ioutil.ReadFile("test.sem")
 
 		mediaEncryptedTest := &encryptMedia.MediaEncrypted{}
-		pb.UnmarshalMediaEncrypted(bytesFile, mediaEncryptedTest)
-		decryptedBytes, _ := encrypt.Decrypt(mediaEncryptedTest.SymmetricKey, mediaEncryptedTest.EncryptedBytes)
+		protobuf.UnmarshalMediaEncrypted(bytesFile, mediaEncryptedTest)
+		decryptedBytes, _ := symmetric.Decrypt(mediaEncryptedTest.SymmetricKey, mediaEncryptedTest.EncryptedBytes)
 
 		mediaTest := &encryptMedia.Media{}
 		mediaTest.Version = mediaEncryptedTest.Version
@@ -58,7 +58,7 @@ func TestSaveMediaEncrypted(t *testing.T) {
 		mediaTest.ApplicationVersion = mediaEncryptedTest.ApplicationVersion
 		mediaTest.Bytes = decryptedBytes
 
-		mediaTestBytes, _ := pb.MarshalMedia(mediaTest)
+		mediaTestBytes, _ := protobuf.MarshalMedia(mediaTest)
 		if !bytes.Equal(mediaTestBytes, m.data) {
 			t.Errorf("MediaBytes returned:%v, expected:%v", mediaTestBytes, m.data)
 		}
@@ -66,7 +66,7 @@ func TestSaveMediaEncrypted(t *testing.T) {
 }
 
 func BenchmarkMarshal(b *testing.B) {
-	media := &pb.Media{Version: 1,
+	media := &protobuf.Media{Version: 1,
 		GUID:               "test",
 		Client:             "test",
 		LoanType:           "test",
@@ -93,7 +93,7 @@ func BenchmarkUnmarshal(b *testing.B) {
 	data := []byte{8, 1, 18, 4, 116, 101, 115, 116, 26, 4, 116, 101, 115, 116, 34, 4, 116, 101, 115, 116, 42, 4, 116, 101, 115, 116, 50, 4, 116, 101, 115, 116, 61, 0, 0, 128, 63, 69, 0, 0, 0, 64, 74, 4, 116,
 		101, 115, 116, 82, 4, 116, 101, 115, 116, 90, 4, 116, 101, 115, 116, 98, 4, 116, 101, 115, 116, 106, 4, 116, 101, 115, 116, 114, 3, 10, 20, 30, 122, 4, 116, 101, 115, 116, 130, 1, 4, 116, 101, 115, 116, 138, 1, 4, 116,
 		101, 115, 116, 146, 1, 4, 116, 101, 115, 116}
-	media := &pb.Media{}
+	media := &protobuf.Media{}
 	for n := 0; n < b.N; n++ {
 		proto.Unmarshal(data, media)
 	}

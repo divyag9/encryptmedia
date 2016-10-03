@@ -5,20 +5,20 @@ import (
 	"log"
 
 	"github.com/divyag9/encryptmedia/packages"
-	"github.com/divyag9/encryptmedia/packages/encrypt"
+	"github.com/divyag9/encryptmedia/packages/encrypt/symmetric"
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 )
 
 // GetMediaEncryptedBytes returns the bytes of MediaEncrypted struct
 func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted) ([]byte, error) {
 	//Generate key for encryption of media bytes
-	key, err := encrypt.GenerateKey()
+	key, err := symmetric.GenerateKey()
 	if err != nil {
 		log.Fatalln("Error generating AES-256 key ", err)
 		return nil, err
 	}
 	// Encrypt the media bytes
-	encryptedBytes, errEncrypt := encrypt.Encrypt(key, media.Bytes)
+	encryptedBytes, errEncrypt := symmetric.Encrypt(key, media.Bytes)
 	if errEncrypt != nil {
 		log.Fatalln("Error encrypting media bytes ", errEncrypt)
 		return nil, errEncrypt
@@ -41,8 +41,9 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncrypted.Application = media.Application
 	mediaEncrypted.ApplicationID = media.ApplicationID
 	mediaEncrypted.ApplicationVersion = media.ApplicationVersion
-	mediaEncrypted.SymmetricKey = key
+	mediaEncrypted.EncryptedKey = encryptedKey
 	mediaEncrypted.EncryptedBytes = encryptedBytes
+	mediaEncrypted.PrivateKey = privateKey
 
 	// Marshal MediaEncrypted
 	mediaEncryptedBytes, err := protobuf.MarshalMediaEncrypted(mediaEncrypted)

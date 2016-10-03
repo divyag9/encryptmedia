@@ -26,8 +26,9 @@ func MarshalMediaEncrypted(mediaEncrypted *encryptMedia.MediaEncrypted) ([]byte,
 		Application:        mediaEncrypted.Application,
 		ApplicationID:      mediaEncrypted.ApplicationID,
 		ApplicationVersion: mediaEncrypted.ApplicationVersion,
-		SymmetricKey:       mediaEncrypted.SymmetricKey,
 		EncryptedBytes:     mediaEncrypted.EncryptedBytes,
+		EncryptedKey:       mediaEncrypted.EncryptedKey,
+		PrivateKey:         mediaEncrypted.PrivateKey,
 	})
 }
 
@@ -53,8 +54,9 @@ func UnmarshalMediaEncrypted(data []byte, mediaEncrypted *encryptMedia.MediaEncr
 	mediaEncrypted.Application = pb.Application
 	mediaEncrypted.ApplicationID = pb.ApplicationID
 	mediaEncrypted.ApplicationVersion = pb.ApplicationVersion
-	mediaEncrypted.SymmetricKey = pb.SymmetricKey
 	mediaEncrypted.EncryptedBytes = pb.EncryptedBytes
+	mediaEncrypted.EncryptedKey = pb.EncryptedKey
+	mediaEncrypted.PrivateKey = pb.PrivateKey
 
 	return nil
 }
