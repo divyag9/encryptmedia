@@ -1,7 +1,6 @@
 package mediastore
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -18,7 +17,6 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 		log.Fatalln("Error generating AES-256 key ", err)
 		return nil, err
 	}
-	fmt.Println("media: ", media)
 	// Encrypt the media bytes
 	encryptedBytes, errEncrypt := encrypt.Encrypt(key, media.Bytes)
 	if errEncrypt != nil {
@@ -51,7 +49,7 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("mediabytes: ", mediaEncryptedBytes)
+
 	return mediaEncryptedBytes, nil
 }
 

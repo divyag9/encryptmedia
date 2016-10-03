@@ -53,6 +53,8 @@ func UnmarshalMediaEncrypted(data []byte, mediaEncrypted *encryptMedia.MediaEncr
 	mediaEncrypted.Application = pb.Application
 	mediaEncrypted.ApplicationID = pb.ApplicationID
 	mediaEncrypted.ApplicationVersion = pb.ApplicationVersion
+	mediaEncrypted.SymmetricKey = pb.SymmetricKey
+	mediaEncrypted.EncryptedBytes = pb.EncryptedBytes
 
 	return nil
 }

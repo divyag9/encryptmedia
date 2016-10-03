@@ -1,9 +1,9 @@
 package mediastore
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
-	"reflect"
 	"testing"
 
 	"github.com/divyag9/encryptmedia/packages"
@@ -15,9 +15,10 @@ import (
 var mediaCases = []struct {
 	data []byte
 }{
-	{[]byte{8, 1, 18, 4, 116, 101, 115, 116, 26, 4, 116, 101, 115, 116, 34, 4, 116, 101, 115, 116, 42, 4, 116, 101, 115, 116, 50, 4, 116, 101, 115, 116, 61, 0, 0, 128, 63, 69, 0, 0, 0, 64, 7,
-		4, 4, 116, 101, 115, 116, 82, 4, 116, 101, 115, 116, 90, 4, 116, 101, 115, 116, 98, 4, 116, 101, 115, 116, 106, 4, 116, 101, 115, 116, 114, 4, 116, 101, 115, 116, 122, 4, 116, 101, 115, 116,
-		130, 1, 4, 116, 101, 115, 116, 138, 1, 4, 116, 101, 115, 116, 146, 1, 6, 1, 2, 3, 4, 5, 6},
+	{[]byte{8, 1, 18, 4, 116, 101, 115, 116, 26, 4, 116, 101, 115, 116, 34, 4, 116, 101, 115, 116, 42, 4, 116, 101, 115, 116, 50, 4, 116, 101, 115, 116,
+		61, 0, 0, 128, 63, 69, 0, 0, 0, 64, 74, 4, 116, 101, 115, 116, 82, 4, 116, 101, 115, 116, 90, 4, 116, 101, 115, 116, 98, 4, 116, 101, 115, 116,
+		106, 4, 116, 101, 115, 116, 114, 4, 116, 101, 115, 116, 122, 4, 116, 101, 115, 116, 130, 1, 4, 116, 101, 115, 116, 138, 1, 4, 116, 101, 115,
+		116, 146, 1, 4, 1, 2, 3, 4},
 	},
 }
 
@@ -25,15 +26,18 @@ func TestSaveMediaEncrypted(t *testing.T) {
 	for _, m := range mediaCases {
 		media := &encryptMedia.Media{}
 		pb.UnmarshalMedia(m.data, media)
+
 		mediaEncrypted := &encryptMedia.MediaEncrypted{}
 		mediaEncryptedBytes, _ := GetMediaEncryptedBytes(media, mediaEncrypted)
 		SaveMediaEncrypted(mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
 
 		//Read the contents of file and make sure the contents are same as original Media protobuf after decrypting
 		bytesFile, _ := ioutil.ReadFile("test.sem")
+
 		mediaEncryptedTest := &encryptMedia.MediaEncrypted{}
 		pb.UnmarshalMediaEncrypted(bytesFile, mediaEncryptedTest)
 		decryptedBytes, _ := encrypt.Decrypt(mediaEncryptedTest.SymmetricKey, mediaEncryptedTest.EncryptedBytes)
+
 		mediaTest := &encryptMedia.Media{}
 		mediaTest.Version = mediaEncryptedTest.Version
 		mediaTest.GUID = mediaEncryptedTest.GUID
@@ -53,8 +57,10 @@ func TestSaveMediaEncrypted(t *testing.T) {
 		mediaTest.ApplicationID = mediaEncryptedTest.ApplicationID
 		mediaTest.ApplicationVersion = mediaEncryptedTest.ApplicationVersion
 		mediaTest.Bytes = decryptedBytes
-		if !reflect.DeepEqual(*media, *mediaTest) {
-			t.Errorf("Media returned:%v, expected:%v", *mediaTest, *media)
+
+		mediaTestBytes, _ := pb.MarshalMedia(mediaTest)
+		if !bytes.Equal(mediaTestBytes, m.data) {
+			t.Errorf("MediaBytes returned:%v, expected:%v", mediaTestBytes, m.data)
 		}
 	}
 }

@@ -27,6 +27,7 @@ func UnmarshalMedia(data []byte, media *encryptMedia.Media) error {
 	media.Application = pb.Application
 	media.ApplicationID = pb.ApplicationID
 	media.ApplicationVersion = pb.ApplicationVersion
+	media.Bytes = pb.Bytes
 
 	return nil
 }
@@ -52,5 +53,6 @@ func MarshalMedia(media *encryptMedia.Media) ([]byte, error) {
 		Application:        media.Application,
 		ApplicationID:      media.ApplicationID,
 		ApplicationVersion: media.ApplicationVersion,
+		Bytes:              media.Bytes,
 	})
 }
