@@ -45,3 +45,8 @@ type MediaEncrypted struct {
 	EncryptedKey       []byte
 	PrivateKey         []byte
 }
+
+// MediaService is service for managing Media
+type MediaService interface {
+	SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) error
+}

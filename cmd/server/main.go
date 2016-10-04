@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -11,6 +11,11 @@ import (
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 )
 
+// RequestBody represents request body
+type RequestBody struct {
+	Data []byte `json:"data"`
+}
+
 func main() {
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
@@ -18,27 +23,35 @@ func main() {
 
 // handle the incoming requet
 func handler(w http.ResponseWriter, r *http.Request) {
-	data, err := ioutil.ReadAll(r.Body)
+	// Decode body
+	decoder := json.NewDecoder(r.Body)
+	var requestBody RequestBody
+	err := decoder.Decode(&requestBody)
 	if err != nil {
-		log.Fatalln("Failed to read request body: ", err)
+		log.Fatalln("Error decoding the request body: ", err)
 	}
 
 	media := &encryptMedia.Media{}
 	// Decode the recieved media
-	errUnmarshal := protobuf.UnmarshalMedia(data, media)
-	if errUnmarshal != nil {
-		log.Fatalln("Failed to decode Media:", errUnmarshal)
+	err = protobuf.UnmarshalMedia(requestBody.Data, media)
+	if err != nil {
+		log.Fatalln("Failed to decode Media: ", err)
 	}
-
 	mediaEncrypted := &encryptMedia.MediaEncrypted{}
 	// Get the media encrypted bytes and write to file on disk
-	mediaEncryptedBytes, errBytes := mediastore.GetMediaEncryptedBytes(media, mediaEncrypted)
-	if errBytes != nil {
-		log.Fatalln("Failed to get media encrypted bytes: ", errBytes)
+	mediaEncryptedBytes, err := mediastore.GetMediaEncryptedBytes(media, mediaEncrypted)
+	if err != nil {
+		log.Fatalln("Failed to get media encrypted bytes: ", err)
 	}
-	errSave := mediastore.SaveMediaEncrypted(mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
-	if errSave != nil {
-		log.Fatalln("Failed to write media encrypted bytes to disk: ", errSave)
+	ems := mediastore.EncryptedMediaService{}
+	saveMedia(ems, mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
+}
+
+// Function to save the media
+func saveMedia(ms encryptMedia.MediaService, mediaEncryptedBytes []byte, fileName string) {
+	err := ms.SaveMediaEncrypted(mediaEncryptedBytes, fileName)
+	if err != nil {
+		log.Fatalln("Failed to write media encrypted bytes to disk: ", err)
 	}
 	fmt.Println("File stored on disk")
 }

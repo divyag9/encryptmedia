@@ -4,14 +4,12 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
-	"fmt"
 )
 
 // GenerateKeys generates the private and public key for encryption/decryption
 func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	//Generate Private Key
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
-	fmt.Println("privateKey", privateKey)
 	// Precompute Calculations that speed up private key operations in the future
 	privateKey.Precompute()
 	//Validate Private Key

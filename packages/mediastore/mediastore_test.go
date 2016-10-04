@@ -31,7 +31,8 @@ func TestSaveMediaEncrypted(t *testing.T) {
 
 		mediaEncrypted := &encryptMedia.MediaEncrypted{}
 		mediaEncryptedBytes, _ := GetMediaEncryptedBytes(media, mediaEncrypted)
-		SaveMediaEncrypted(mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
+		ems := EncryptedMediaService{}
+		ems.SaveMediaEncrypted(mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
 
 		//Read the contents of file and make sure the contents are same as original Media protobuf after decrypting
 		bytesFile, _ := ioutil.ReadFile("test.sem")
