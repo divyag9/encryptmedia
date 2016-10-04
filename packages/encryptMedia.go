@@ -42,5 +42,6 @@ type MediaEncrypted struct {
 	ApplicationID      string
 	ApplicationVersion string
 	EncryptedBytes     []byte
-	SymmetricKey       []byte
+	EncryptedKey       []byte
+	PrivateKey         []byte
 }

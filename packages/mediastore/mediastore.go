@@ -1,10 +1,12 @@
 package mediastore
 
 import (
+	"crypto/x509"
 	"io/ioutil"
 	"log"
 
 	"github.com/divyag9/encryptmedia/packages"
+	"github.com/divyag9/encryptmedia/packages/encrypt/asymmetric"
 	"github.com/divyag9/encryptmedia/packages/encrypt/symmetric"
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 )
@@ -23,6 +25,20 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 		log.Fatalln("Error encrypting media bytes ", errEncrypt)
 		return nil, errEncrypt
 	}
+	// Generate public and private keys
+	privateKey, publicKey, errKey := asymmetric.GenerateKeys()
+	if errKey != nil {
+		log.Fatalln("Error generating keys ", errKey)
+		return nil, errKey
+	}
+	// Encrypt the key used to encrypt the media bytes
+	encryptedKey, errEncryptKey := asymmetric.Encrypt(publicKey, key, []byte(""))
+	if errEncryptKey != nil {
+		log.Fatalln("Error encrypting key ", errEncryptKey)
+		return nil, errEncryptKey
+	}
+	// Convert private key to bytes
+	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
 
 	mediaEncrypted.Version = media.Version
 	mediaEncrypted.GUID = media.GUID
@@ -41,9 +57,9 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncrypted.Application = media.Application
 	mediaEncrypted.ApplicationID = media.ApplicationID
 	mediaEncrypted.ApplicationVersion = media.ApplicationVersion
-	mediaEncrypted.EncryptedKey = encryptedKey
 	mediaEncrypted.EncryptedBytes = encryptedBytes
-	mediaEncrypted.PrivateKey = privateKey
+	mediaEncrypted.EncryptedKey = encryptedKey
+	mediaEncrypted.PrivateKey = privateKeyBytes
 
 	// Marshal MediaEncrypted
 	mediaEncryptedBytes, err := protobuf.MarshalMediaEncrypted(mediaEncrypted)

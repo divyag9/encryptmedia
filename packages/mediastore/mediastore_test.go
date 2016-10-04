@@ -2,11 +2,13 @@ package mediastore
 
 import (
 	"bytes"
+	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"testing"
 
 	"github.com/divyag9/encryptmedia/packages"
+	"github.com/divyag9/encryptmedia/packages/encrypt/asymmetric"
 	"github.com/divyag9/encryptmedia/packages/encrypt/symmetric"
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 	"github.com/golang/protobuf/proto"
@@ -36,7 +38,9 @@ func TestSaveMediaEncrypted(t *testing.T) {
 
 		mediaEncryptedTest := &encryptMedia.MediaEncrypted{}
 		protobuf.UnmarshalMediaEncrypted(bytesFile, mediaEncryptedTest)
-		decryptedBytes, _ := symmetric.Decrypt(mediaEncryptedTest.SymmetricKey, mediaEncryptedTest.EncryptedBytes)
+		privateKeyTest, _ := x509.ParsePKCS1PrivateKey(mediaEncryptedTest.PrivateKey)
+		keyTest, _ := asymmetric.Decrypt(privateKeyTest, mediaEncryptedTest.EncryptedKey, []byte(""))
+		decryptedBytes, _ := symmetric.Decrypt(keyTest, mediaEncryptedTest.EncryptedBytes)
 
 		mediaTest := &encryptMedia.Media{}
 		mediaTest.Version = mediaEncryptedTest.Version
