@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -34,8 +35,9 @@ func main() {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Unable to reach the server.")
+		fmt.Println("Error occured posting the request.")
 	} else {
-		fmt.Println("body", resp.Body)
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(body))
 	}
 }
