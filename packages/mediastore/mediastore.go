@@ -19,22 +19,22 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	//Generate key for encryption of media bytes
 	key, err := symmetric.GenerateKey()
 	if err != nil {
-		log.Fatalln("Error generating symmetric key ", err)
+		log.Println("Error generating symmetric key ", err)
 	}
 	// Encrypt the media bytes
 	encryptedBytes, err := symmetric.Encrypt(key, media.Bytes)
 	if err != nil {
-		log.Fatalln("Error encrypting media bytes ", err)
+		log.Println("Error encrypting media bytes ", err)
 	}
 	// Generate public and private keys
 	privateKey, publicKey, err := asymmetric.GenerateKeys()
 	if err != nil {
-		log.Fatalln("Error generating public and private keys ", err)
+		log.Println("Error generating public and private keys ", err)
 	}
 	// Encrypt the key used to encrypt the media bytes
 	encryptedKey, err := asymmetric.Encrypt(publicKey, key, []byte(""))
 	if err != nil {
-		log.Fatalln("Error encrypting symmetric key ", err)
+		log.Println("Error encrypting symmetric key ", err)
 	}
 	// Convert private key to bytes
 	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
