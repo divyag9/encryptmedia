@@ -15,30 +15,26 @@ import (
 type EncryptedMediaService struct{}
 
 // GetMediaEncryptedBytes returns the bytes of MediaEncrypted struct
-func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted) ([]byte, error) {
+func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted) (mediaEncryptedBytes []byte, err error) {
 	//Generate key for encryption of media bytes
 	key, err := symmetric.GenerateKey()
 	if err != nil {
-		log.Fatalln("Error generating AES-256 key ", err)
-		return nil, err
+		log.Fatalln("Error generating symmetric key ", err)
 	}
 	// Encrypt the media bytes
 	encryptedBytes, err := symmetric.Encrypt(key, media.Bytes)
 	if err != nil {
 		log.Fatalln("Error encrypting media bytes ", err)
-		return nil, err
 	}
 	// Generate public and private keys
 	privateKey, publicKey, err := asymmetric.GenerateKeys()
 	if err != nil {
-		log.Fatalln("Error generating keys ", err)
-		return nil, err
+		log.Fatalln("Error generating public and private keys ", err)
 	}
 	// Encrypt the key used to encrypt the media bytes
 	encryptedKey, err := asymmetric.Encrypt(publicKey, key, []byte(""))
 	if err != nil {
-		log.Fatalln("Error encrypting key ", err)
-		return nil, err
+		log.Fatalln("Error encrypting symmetric key ", err)
 	}
 	// Convert private key to bytes
 	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
@@ -65,17 +61,14 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncrypted.PrivateKey = privateKeyBytes
 
 	// Marshal MediaEncrypted
-	mediaEncryptedBytes, err := protobuf.MarshalMediaEncrypted(mediaEncrypted)
-	if err != nil {
-		return nil, err
-	}
+	mediaEncryptedBytes, err = protobuf.MarshalMediaEncrypted(mediaEncrypted)
 
-	return mediaEncryptedBytes, nil
+	return
 }
 
 //SaveMediaEncrypted saves the encrypted media bytes to file on disk
-func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) error {
-	ioutil.WriteFile(fileName, mediaEncryptedBytes, 0644)
+func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) (err error) {
+	err = ioutil.WriteFile(fileName, mediaEncryptedBytes, 0644)
 
-	return nil
+	return
 }

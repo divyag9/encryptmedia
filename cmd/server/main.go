@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,11 +11,6 @@ import (
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 )
 
-// RequestBody represents request body
-type RequestBody struct {
-	Data []byte `json:"data"`
-}
-
 func main() {
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
@@ -23,17 +18,14 @@ func main() {
 
 // handle the incoming requet
 func handler(w http.ResponseWriter, r *http.Request) {
-	// Decode body
-	decoder := json.NewDecoder(r.Body)
-	var requestBody RequestBody
-	err := decoder.Decode(&requestBody)
-	if err != nil {
-		log.Fatalln("Error decoding the request body: ", err)
-	}
+	//Need to convert to bytes???
+	bufBody := new(bytes.Buffer)
+	bufBody.ReadFrom(r.Body)
+	fmt.Print("byte array: ", bufBody)
 
 	media := &encryptMedia.Media{}
 	// Decode the recieved media
-	err = protobuf.UnmarshalMedia(requestBody.Data, media)
+	err := protobuf.UnmarshalMedia(bufBody.Bytes(), media)
 	if err != nil {
 		log.Fatalln("Failed to decode Media: ", err)
 	}

@@ -30,50 +30,25 @@ func GenerateNonce() ([]byte, error) {
 }
 
 // Encrypt secures a message using AES-GCM.
-func Encrypt(key, message []byte) ([]byte, error) {
+func Encrypt(key, message []byte) (encryptedBytes []byte, err error) {
 	c, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
 	gcm, err := cipher.NewGCM(c)
-	if err != nil {
-		return nil, err
-	}
-
 	nonce, err := GenerateNonce()
-	if err != nil {
-		return nil, err
-	}
+	encryptedBytes = gcm.Seal(nonce, nonce, message, nil)
 
-	out := gcm.Seal(nonce, nonce, message, nil)
-
-	return out, nil
+	return
 }
 
 // Decrypt recovers a message secured using AES-GCM.
-func Decrypt(key, message []byte) ([]byte, error) {
+func Decrypt(key, message []byte) (decryptedBytes []byte, err error) {
 	if len(message) <= nonceSize {
 		return nil, errors.New("Decryption failed: message length is less than nonce size")
 	}
-
 	c, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
 	gcm, err := cipher.NewGCM(c)
-	if err != nil {
-		return nil, err
-	}
-
 	nonce := make([]byte, nonceSize)
 	copy(nonce, message)
+	decryptedBytes, err = gcm.Open(nil, nonce, message[nonceSize:], nil)
 
-	out, err := gcm.Open(nil, nonce, message[nonceSize:], nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return out, nil
+	return
 }

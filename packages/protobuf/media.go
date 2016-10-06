@@ -6,10 +6,9 @@ import (
 )
 
 // UnmarshalMedia decodes Media from binary data
-func UnmarshalMedia(data []byte, media *encryptMedia.Media) error {
+func UnmarshalMedia(data []byte, media *encryptMedia.Media) (err error) {
 	var pb Media
-	proto.Unmarshal(data, &pb)
-
+	err = proto.Unmarshal(data, &pb)
 	media.Version = pb.Version
 	media.GUID = pb.GUID
 	media.Client = pb.Client
@@ -29,7 +28,7 @@ func UnmarshalMedia(data []byte, media *encryptMedia.Media) error {
 	media.ApplicationVersion = pb.ApplicationVersion
 	media.Bytes = pb.Bytes
 
-	return nil
+	return
 }
 
 // MarshalMedia recieves the Media protobuf encodes to binary format

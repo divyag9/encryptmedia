@@ -33,10 +33,9 @@ func MarshalMediaEncrypted(mediaEncrypted *encryptMedia.MediaEncrypted) ([]byte,
 }
 
 // UnmarshalMediaEncrypted decodes MediaEncrypted from binary data
-func UnmarshalMediaEncrypted(data []byte, mediaEncrypted *encryptMedia.MediaEncrypted) error {
+func UnmarshalMediaEncrypted(data []byte, mediaEncrypted *encryptMedia.MediaEncrypted) (err error) {
 	var pb MediaEncrypted
-	proto.Unmarshal(data, &pb)
-
+	err = proto.Unmarshal(data, &pb)
 	mediaEncrypted.Version = pb.Version
 	mediaEncrypted.GUID = pb.GUID
 	mediaEncrypted.Client = pb.Client
@@ -58,5 +57,5 @@ func UnmarshalMediaEncrypted(data []byte, mediaEncrypted *encryptMedia.MediaEncr
 	mediaEncrypted.EncryptedKey = pb.EncryptedKey
 	mediaEncrypted.PrivateKey = pb.PrivateKey
 
-	return nil
+	return
 }
