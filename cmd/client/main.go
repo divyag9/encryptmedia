@@ -31,7 +31,7 @@ func main() {
 	var reqBytes = []byte{8, 1, 18, 4, 116, 101, 115, 116, 26, 4, 116, 101, 115, 116, 34, 4, 116, 101, 115, 116, 42, 4, 116, 101, 115, 116, 50, 4, 116, 101, 115, 116, 61, 0, 0, 128, 63, 69, 0, 0, 0, 64, 74, 4, 116, 101, 115, 116, 82, 4, 116, 101, 115, 116, 90, 4, 116, 101, 115, 116, 98, 4, 116, 101, 115, 116, 106, 4, 116, 101, 115, 116, 114, 4, 116, 101, 115, 116, 122, 4, 116, 101, 115, 116, 130, 1, 4, 116, 101, 115, 116, 138, 1, 4, 116, 101, 115, 116, 146, 1, 4, 1, 2, 3, 4}
 	url := "http://localhost:8080/"
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/octet-stream")
 
 	resp, err := client.Do(req)
 	if err != nil {

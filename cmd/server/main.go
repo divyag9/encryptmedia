@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -18,14 +18,14 @@ func main() {
 
 // handle the incoming requet
 func handler(w http.ResponseWriter, r *http.Request) {
-	//Need to convert to bytes???
-	bufBody := new(bytes.Buffer)
-	bufBody.ReadFrom(r.Body)
-	fmt.Println("byte array: ", bufBody)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println("Failed to read the request body", err)
+	}
 
 	media := &encryptMedia.Media{}
 	// Decode the recieved media
-	err := protobuf.UnmarshalMedia(bufBody.Bytes(), media)
+	err = protobuf.UnmarshalMedia(reqBody, media)
 	if err != nil {
 		log.Println("Failed to decode Media: ", err)
 	}
