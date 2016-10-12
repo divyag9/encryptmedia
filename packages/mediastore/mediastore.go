@@ -27,7 +27,7 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 		log.Println("Error encrypting media bytes ", err)
 	}
 	// Generate public and private keys
-	privateKey, publicKey, err := asymmetric.GenerateKeys()
+	_, publicKey, err := asymmetric.GenerateKeys()
 	if err != nil {
 		log.Println("Error generating public and private keys ", err)
 	}
@@ -36,8 +36,11 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	if err != nil {
 		log.Println("Error encrypting symmetric key ", err)
 	}
-	// Convert private key to bytes
-	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
+	// Convert public key to bytes
+	publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
+	if err != nil {
+		log.Println("Error marshalling public key ", err)
+	}
 
 	mediaEncrypted.Version = media.Version
 	mediaEncrypted.GUID = media.GUID
@@ -58,7 +61,7 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncrypted.ApplicationVersion = media.ApplicationVersion
 	mediaEncrypted.EncryptedBytes = encryptedBytes
 	mediaEncrypted.EncryptedKey = encryptedKey
-	mediaEncrypted.PrivateKey = privateKeyBytes
+	mediaEncrypted.PublicKey = publicKeyBytes
 
 	// Marshal MediaEncrypted
 	mediaEncryptedBytes, err = protobuf.MarshalMediaEncrypted(mediaEncrypted)

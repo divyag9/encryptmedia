@@ -43,7 +43,7 @@ type MediaEncrypted struct {
 	ApplicationVersion string
 	EncryptedBytes     []byte
 	EncryptedKey       []byte
-	PrivateKey         []byte
+	PublicKey          []byte
 }
 
 // MediaService is service for managing Media
