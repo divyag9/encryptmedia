@@ -1,12 +1,17 @@
 
-github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 GenerateKey	 100.00% (3/3)
-github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 GenerateNonce	 100.00% (3/3)
-github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 Encrypt	 72.73% (8/11)
-github.com/divyag9/encryptmedia/packages/encrypt/encrypt.go	 Decrypt	 71.43% (10/14)
-github.com/divyag9/encryptmedia/packages/encrypt		 -------------	 77.42% (24/31)
+github.com/divyag9/encryptmedia/packages/encrypt/asymmetric/asymmetric.go	 GenerateKeys	 100.00% (5/5)
+github.com/divyag9/encryptmedia/packages/encrypt/asymmetric/asymmetric.go	 Encrypt	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/asymmetric/asymmetric.go	 Decrypt	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/asymmetric			 ------------	 100.00% (11/11)
 
-github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 Media.GetEncryptedMedia			 83.87% (26/31)
-github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 GetMedia					 60.00% (3/5)
-github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 MediaEncrypted.WriteEncryptedMediaToFile	 54.55% (6/11)
-github.com/divyag9/encryptmedia/packages/mediastore			 ----------------------------------------	 74.47% (35/47)
+github.com/divyag9/encryptmedia/packages/encrypt/symmetric/symmetric.go	 Encrypt	 100.00% (5/5)
+github.com/divyag9/encryptmedia/packages/encrypt/symmetric/symmetric.go	 GenerateKey	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/symmetric/symmetric.go	 GenerateNonce	 100.00% (3/3)
+github.com/divyag9/encryptmedia/packages/encrypt/symmetric/symmetric.go	 Decrypt	 87.50% (7/8)
+github.com/divyag9/encryptmedia/packages/encrypt/symmetric		 -------------	 94.74% (18/19)
+
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 EncryptedMediaService.SaveMediaEncrypted	 100.00% (2/2)
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 getPublicKey					 91.67% (11/12)
+github.com/divyag9/encryptmedia/packages/mediastore/mediastore.go	 GetMediaEncryptedBytes				 84.21% (32/38)
+github.com/divyag9/encryptmedia/packages/mediastore			 ----------------------------------------	 86.54% (45/52)
 

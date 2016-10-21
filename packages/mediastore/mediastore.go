@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -34,6 +35,7 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	publicKey, err := getPublicKey(pemFilePath)
 	if err != nil {
 		log.Println("Error retrieving public key ", err)
+		return nil, fmt.Errorf("Error retrieving public key: %s", err)
 	}
 	// Encrypt the symmetric key used to encrypt the media bytes
 	encryptedKey, err := asymmetric.Encrypt(publicKey, key, []byte(""))
@@ -81,6 +83,11 @@ func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, 
 
 // getPublicKey reads the public.pem file and returns the public key
 func getPublicKey(pemFilePath string) (publicKey *rsa.PublicKey, err error) {
+	// Does the PEM file even exist?
+	if _, err = os.Stat(pemFilePath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("Pem file %s does not exist", pemFilePath)
+	}
+
 	// Load PEM
 	pemFile, err := os.Open(pemFilePath)
 	// need to convert pemfile to []byte for decoding
