@@ -41,6 +41,14 @@ var mediaCases = []struct {
 	},
 }
 
+var pemFilePaths = []struct {
+	pemFilePath string
+}{
+	{
+		"../../cmd/server/publictest.pem",
+	},
+}
+
 func TestSaveMediaEncrypted(t *testing.T) {
 	for _, m := range mediaCases {
 		media := &encryptMedia.Media{}
@@ -64,6 +72,15 @@ func TestSaveMediaEncrypted(t *testing.T) {
 		bytesFile, _ := ioutil.ReadFile("test.sem")
 		if !bytes.Equal(bytesFile, mediaEncryptedBytes) {
 			t.Errorf("sem file bytes returned:%v, expected:%v", mediaEncryptedBytes, m.mediaEncryptedBytes)
+		}
+	}
+}
+
+func TestGetPublicKey(t *testing.T) {
+	for _, m := range pemFilePaths {
+		_, err := getPublicKey(m.pemFilePath)
+		if err == nil {
+			t.Errorf("expected: Pem file does not exist")
 		}
 	}
 }

@@ -7,45 +7,44 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/divyag9/encryptmedia/packages"
 	"github.com/divyag9/encryptmedia/packages/encrypt/asymmetric"
 	"github.com/divyag9/encryptmedia/packages/encrypt/symmetric"
 	"github.com/divyag9/encryptmedia/packages/protobuf"
+	"github.com/pkg/errors"
 )
 
 // EncryptedMediaService struct manages MediaEncrypted
 type EncryptedMediaService struct{}
 
 // GetMediaEncryptedBytes returns the bytes of MediaEncrypted struct
-func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted, pemFilePath string) (mediaEncryptedBytes []byte, err error) {
+func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted, pemFilePath string) ([]byte, error) {
 	//Generate key for encryption of media bytes
 	key, err := symmetric.GenerateKey()
 	if err != nil {
-		log.Println("Error generating symmetric key ", err)
+		return nil, errors.Wrap(err, "Error generating symmetric key ")
 	}
 	// Encrypt the media bytes
 	encryptedBytes, err := symmetric.Encrypt(key, media.Bytes)
 	if err != nil {
-		log.Println("Error encrypting media bytes ", err)
+		return nil, errors.Wrap(err, "Error encrypting media bytes ")
 	}
 	// Get the public key for encryption
 	publicKey, err := getPublicKey(pemFilePath)
 	if err != nil {
-		log.Println("Error retrieving public key ", err)
-		return nil, fmt.Errorf("Error retrieving public key: %s", err)
+		return nil, errors.Wrap(err, "Error retrieving public key ")
 	}
 	// Encrypt the symmetric key used to encrypt the media bytes
 	encryptedKey, err := asymmetric.Encrypt(publicKey, key, []byte(""))
 	if err != nil {
-		log.Println("Error encrypting symmetric key ", err)
+		return nil, errors.Wrap(err, "Error encrypting symmetric key ")
 	}
 	// Convert public key to bytes
 	publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
-		log.Println("Error marshalling public key ", err)
+		return nil, errors.Wrap(err, "Error marshalling public key ")
 	}
 
 	mediaEncrypted.Version = media.Version
@@ -69,23 +68,23 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncrypted.EncryptedKey = encryptedKey
 	mediaEncrypted.PublicKey = publicKeyBytes
 	// Marshal MediaEncrypted
-	mediaEncryptedBytes, err = protobuf.MarshalMediaEncrypted(mediaEncrypted)
+	mediaEncryptedBytes, err := protobuf.MarshalMediaEncrypted(mediaEncrypted)
 
-	return
+	return mediaEncryptedBytes, err
 }
 
 //SaveMediaEncrypted saves the encrypted media bytes to file on disk
-func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) (err error) {
-	err = ioutil.WriteFile(fileName, mediaEncryptedBytes, 0644)
+func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) error {
+	err := ioutil.WriteFile(fileName, mediaEncryptedBytes, 0644)
 
-	return
+	return err
 }
 
 // getPublicKey reads the public.pem file and returns the public key
-func getPublicKey(pemFilePath string) (publicKey *rsa.PublicKey, err error) {
+func getPublicKey(pemFilePath string) (*rsa.PublicKey, error) {
 	// Does the PEM file even exist?
-	if _, err = os.Stat(pemFilePath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("Pem file %s does not exist", pemFilePath)
+	if _, err := os.Stat(pemFilePath); os.IsNotExist(err) {
+		return nil, errors.Wrap(err, fmt.Sprintf("Pem file %s does not exist", pemFilePath))
 	}
 
 	// Load PEM
@@ -100,7 +99,7 @@ func getPublicKey(pemFilePath string) (publicKey *rsa.PublicKey, err error) {
 	publicKeyData, _ := pem.Decode([]byte(pemBytes))
 	// retrive the public key from the bytes
 	publicKeyInterface, err := x509.ParsePKIXPublicKey(publicKeyData.Bytes)
-	publicKey = publicKeyInterface.(*rsa.PublicKey)
+	publicKey := publicKeyInterface.(*rsa.PublicKey)
 
-	return
+	return publicKey, err
 }
