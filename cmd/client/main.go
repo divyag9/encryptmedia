@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/divyag9/encryptmedia/packages"
 )
 
 func main() {
@@ -38,6 +40,24 @@ func main() {
 		fmt.Println("Error occured posting the request.")
 	} else {
 		body, _ := ioutil.ReadAll(resp.Body)
+		//Example where we are trying to save to file
+		file := &File{}
+		file.mediaBytes = body
+		encryptMedia.SaveMedia(file)
 		fmt.Println(string(body))
 	}
+}
+
+//File struct to save the mediabytes to file
+type File struct {
+	mediaBytes []byte
+}
+
+//Save the mediaBytes to File
+func (f *File) Save() error {
+	//will get from config
+	fileName := "test"
+	err := ioutil.WriteFile(fileName, f.mediaBytes, 0644)
+
+	return err
 }

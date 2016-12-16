@@ -1,9 +1,7 @@
 package mediastore
 
 import (
-	"bytes"
-	"fmt"
-	"io/ioutil"
+	"reflect"
 	"testing"
 
 	"github.com/divyag9/encryptmedia/packages"
@@ -56,22 +54,8 @@ func TestSaveMediaEncrypted(t *testing.T) {
 
 		mediaEncrypted := &encryptMedia.MediaEncrypted{}
 		mediaEncryptedBytes, _ := GetMediaEncryptedBytes(media, mediaEncrypted, m.pemFile)
-		mediaEncryptedTest := &encryptMedia.MediaEncrypted{}
-		protobuf.UnmarshalMediaEncrypted(mediaEncryptedBytes, mediaEncryptedTest)
-
-		mediaEncryptedOrig := &encryptMedia.MediaEncrypted{}
-		protobuf.UnmarshalMediaEncrypted(m.mediaEncryptedBytes, mediaEncryptedOrig)
-
-		if mediaEncryptedTest.GUID != mediaEncryptedOrig.GUID {
-			t.Errorf("MediaEncrypted GUID returned:%v, expected:%v", mediaEncryptedTest.GUID, mediaEncryptedOrig.GUID)
-		}
-		ems := EncryptedMediaService{}
-		ems.SaveMediaEncrypted(mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
-
-		//Read the contents of file and make sure the contents are same as original Media protobuf after decrypting
-		bytesFile, _ := ioutil.ReadFile("test.sem")
-		if !bytes.Equal(bytesFile, mediaEncryptedBytes) {
-			t.Errorf("sem file bytes returned:%v, expected:%v", mediaEncryptedBytes, m.mediaEncryptedBytes)
+		if reflect.DeepEqual(mediaEncryptedBytes, m.mediaEncryptedBytes) {
+			t.Errorf("MediaEncrypted bytes returned:%v, expected:%v", mediaEncryptedBytes, m.mediaEncryptedBytes)
 		}
 	}
 }

@@ -45,15 +45,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Failed to get media encrypted bytes: ", err)
 	}
-	ems := mediastore.EncryptedMediaService{}
-	saveMedia(ems, mediaEncryptedBytes, fmt.Sprint(mediaEncrypted.GUID, ".sem"))
-}
-
-// Function to save the media
-func saveMedia(ms encryptMedia.MediaService, mediaEncryptedBytes []byte, fileName string) {
-	err := ms.SaveMediaEncrypted(mediaEncryptedBytes, fileName)
-	if err != nil {
-		log.Println("Failed to write media encrypted bytes to disk: ", err)
-	}
-	log.Println("File stored on disk")
+	fmt.Fprintf(w, "%s", mediaEncryptedBytes)
 }

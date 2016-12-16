@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/divyag9/encryptmedia/packages"
@@ -15,9 +14,6 @@ import (
 	"github.com/divyag9/encryptmedia/packages/protobuf"
 	"github.com/pkg/errors"
 )
-
-// EncryptedMediaService struct manages MediaEncrypted
-type EncryptedMediaService struct{}
 
 // GetMediaEncryptedBytes returns the bytes of MediaEncrypted struct
 func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMedia.MediaEncrypted, pemFilePath string) ([]byte, error) {
@@ -71,13 +67,6 @@ func GetMediaEncryptedBytes(media *encryptMedia.Media, mediaEncrypted *encryptMe
 	mediaEncryptedBytes, err := protobuf.MarshalMediaEncrypted(mediaEncrypted)
 
 	return mediaEncryptedBytes, err
-}
-
-//SaveMediaEncrypted saves the encrypted media bytes to file on disk
-func (ems EncryptedMediaService) SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) error {
-	err := ioutil.WriteFile(fileName, mediaEncryptedBytes, 0644)
-
-	return err
 }
 
 // getPublicKey reads the public.pem file and returns the public key

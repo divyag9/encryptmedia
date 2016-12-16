@@ -46,7 +46,12 @@ type MediaEncrypted struct {
 	PublicKey          []byte
 }
 
-// MediaService is service for managing Media
-type MediaService interface {
-	SaveMediaEncrypted(mediaEncryptedBytes []byte, fileName string) error
+// MediaSaver interface provides the save method for saving the mediaeNcryptedBytes to the desired medium(file,database)
+type MediaSaver interface {
+	Save() error
+}
+
+// SaveMedia function saves calls the MediaSaver interface method to save the mediaBytes as deried by user
+func SaveMedia(ms MediaSaver) error {
+	return ms.Save()
 }
